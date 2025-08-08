@@ -29,3 +29,29 @@ spec:
             limits:
               memory: "1Gi"
               cpu: "500m"
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: springboot-app
+spec:
+  selector:
+    app: springboot-app
+  ports:
+    - port: 8080
+      targetPort: 8080
+---
+
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  name: springboot-app
+spec:
+  to:
+    kind: Service
+    name: springboot-app
+  port:
+    targetPort: 8080
+  tls:
+    termination: edge

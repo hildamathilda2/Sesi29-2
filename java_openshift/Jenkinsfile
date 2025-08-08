@@ -50,7 +50,7 @@ pipeline {
         stage('Generate Deployment YAML') {
             steps {
                 script {
-                    def baseYaml = readFile('base-deployment.yaml')
+                    def baseYaml = readFile('java_openshift/base-deployment.yaml')
                     def updatedYaml = baseYaml.replaceAll(
                         "image:\\s+hfrnssc/java-openshift-jenkins:latest",
                         "image: ${DOCKER_IMAGE}:${env.DOCKER_TAG}"
