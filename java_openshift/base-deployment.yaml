@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: java-openshift-jenkins
+  labels:
+    app: java-openshift-jenkins
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: java-openshift-jenkins
+  template:
+    metadata:
+      labels:
+        app: java-openshift-jenkins
+    spec:
+      containers:
+        - name: java-openshift-jenkins-container
+          image: hfrnssc/java-openshift-jenkins:${IMAGE_VERSION}
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: "prod"
+          resources:
+            requests:
+              memory: "512Mi"
+              cpu: "250m"
+            limits:
+              memory: "1Gi"
+              cpu: "500m"
