@@ -8,7 +8,7 @@ pipeline {
         OPENSHIFT_PROJECT = "hildamathilda7-dev"
         OPENSHIFT_SERVER = "https://api.rm1.0a51.p1.openshiftapps.com:6443"
         OPENSHIFT_TOKEN = credentials('openshift-token-hilda')
-        WEBHOOK_URL = "https://2fb7dc440f09.ngrok-free.app/github-webhook/"
+        WEBHOOK_URL = "https://6fc7fb22f808.ngrok-free.app/github-webhook/"
     }
 
     stages {
@@ -87,7 +87,7 @@ pipeline {
             script {
                 def payload = """
                 {
-                  "text": "Jenkins deployment failed for *springboot-app* in build #${env.BUILD_NUMBER}",
+                  "text": "Jenkins deployment failed for *java-openshift-jenks* in build #${env.BUILD_NUMBER}",
                   "attachments": [
                     {
                       "color": "danger",
