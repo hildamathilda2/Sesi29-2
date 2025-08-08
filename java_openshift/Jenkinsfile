@@ -31,7 +31,7 @@ pipeline {
             steps {
                 script {
                     echo "Building Docker image: ${DOCKER_IMAGE}:${env.DOCKER_TAG}"
-                    docker.build("${DOCKER_IMAGE}:${env.DOCKER_TAG}", "-f java_openshift/Dockerfile .")
+                    docker.build("${DOCKER_IMAGE}:${env.DOCKER_TAG}", "-f java_openshift/Dockerfile java_openshift"")
                 }
             }
         }
