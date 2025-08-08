@@ -77,7 +77,7 @@ pipeline {
     post {
         success {
             script {
-                def route = sh(script: "oc get route springboot-app -o jsonpath='{.spec.host}'", returnStdout: true).trim()
+                def route = sh(script: "oc get route java-openshift-jenks -o jsonpath='{.spec.host}'", returnStdout: true).trim()
                 def routeUrl = "http://${route}"
                 echo "Deployment successful! Access your app at: ${routeUrl}"
             }
