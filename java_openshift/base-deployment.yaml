@@ -34,10 +34,10 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: springboot-app
+  name: java-openshift-jenkins
 spec:
   selector:
-    app: springboot-app
+    app: java-openshift-jenkins
   ports:
     - port: 8080
       targetPort: 8080
@@ -46,11 +46,11 @@ spec:
 apiVersion: route.openshift.io/v1
 kind: Route
 metadata:
-  name: springboot-app
+  name: java-openshift-jenkins
 spec:
   to:
     kind: Service
-    name: springboot-app
+    name: java-openshift-jenkins
   port:
     targetPort: 8080
   tls:
