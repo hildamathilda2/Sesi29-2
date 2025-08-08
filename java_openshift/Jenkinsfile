@@ -52,8 +52,7 @@ pipeline {
                 script {
                     def baseYaml = readFile('java_openshift/base-deployment.yaml')
                     def updatedYaml = baseYaml.replaceAll(
-                        "image:\\s+hfrnssc/java-openshift-jenkins:latest",
-                        "image: ${DOCKER_IMAGE}:${env.DOCKER_TAG}"
+                        "__IMAGE_TAG__", env.DOCKER_TAG
                     )
                     writeFile file: 'deployment.yaml', text: updatedYaml
                     echo "YAML updated with image tag: ${env.DOCKER_TAG}"

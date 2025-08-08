@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
         - name: java-openshift-jenkins-container
-          image: hfrnssc/java-openshift-jenkins:${IMAGE_VERSION}
+          image:  hfrnssc/java-openshift-jenkins:__IMAGE_TAG__
           ports:
             - containerPort: 8080
           env:
