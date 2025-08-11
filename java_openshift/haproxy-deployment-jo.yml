@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: haproxy-jo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: haproxy-jo
+  template:
+    metadata:
+      labels:
+        app: haproxy-jo
+    spec:
+      containers:
+      - name: haproxy-jo
+        image: hfrnssc/java-openshift-jenkins:__IMAGE_TAG__
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: haproxy-config-volume-jo
+          mountPath: /etc/haproxy/haproxy.cfg
+          subPath: haproxy.cfg
+      volumes:
+      - name: haproxy-config-volume-jo
+        configMap:
+          name: haproxy-config-jo
+
