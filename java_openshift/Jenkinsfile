@@ -65,23 +65,41 @@ pipeline {
             steps {
                 script {
                     def targets = [
-                        [name: "hildamathilda7-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", tokenId: env.OPENSHIFT_TOKEN],
-                        [name: "sayyidatun-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", tokenId: env.OPENSHIFT_TOKEN_2]
-
+                        [name: "hildamathilda7-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN],
+                        [name: "sayyidatun-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_2]
                     ]
 
                     for (target in targets) {
-                        def token = credentials("${target.tokenId}")
                         echo "Deploying to project: ${target.name} on cluster: ${target.server}"
 
-                        sh """
-                        oc login ${target.server} --token=${target.tokenId} --insecure-skip-tls-verify
-                        oc project ${target.name}
-                        oc apply -f deployment.yaml
-                        """
+                        def loginStatus = sh(
+                            script: "oc login ${target.server} --token=${target.token} --insecure-skip-tls-verify",
+                            returnStatus: true
+                         )
+                        if (loginStatus != 0) {
+                            error("Failed to login to cluster: ${target.server}")
+                        }
+
+                        def projectStatus = sh(
+                            script: "oc project ${target.name}",
+                            returnStatus: true
+                        )
+                        if (projectStatus != 0) {
+                            error("Failed to switch to project: ${target.name}")
+                        }
+
+                        def applyStatus = sh(
+                            script: "oc apply -f deployment.yaml",
+                            returnStatus: true
+                        )
+                        if (applyStatus != 0) {
+                            error("Failed to apply deployment to project: ${target.name}")
+                        }
+
+                        echo "Successfully deployed to ${target.name}"
                     }
                 }
-            }
+             }
         }
     }
 
