@@ -5,7 +5,8 @@ metadata:
   labels:
     app: java-openshift-jenkins
 spec:
-  replicas: 2
+  minReplicas: 1
+  maxReplicas: 10
   selector:
     matchLabels:
       app: java-openshift-jenkins
