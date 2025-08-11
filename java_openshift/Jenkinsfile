@@ -71,7 +71,7 @@ pipeline {
                         [name: "hildamathilda7-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN],
                         [name: "sayyidatun-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_2],
                         [name: "panduass-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_3],
-                        [name: "abelitang2-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_4],
+                        [name: "abelitang2-dev", server: "https://api.rm3.7wse.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_4],
                         [name: "rmuhammadfayyadh-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_5]
                     ]
 
