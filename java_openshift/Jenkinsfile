@@ -66,7 +66,7 @@ pipeline {
                 script {
                     def targets = [
                         [name: "hildamathilda7-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN],
-                        [name: "sayyidatun-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_2]
+                        [name: "sayyidatu-dev", server: "https://api.rm1.0a51.p1.openshiftapps.com:6443", token: env.OPENSHIFT_TOKEN_2]
                     ]
 
                     for (target in targets) {
