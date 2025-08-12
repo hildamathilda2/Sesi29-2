@@ -4,7 +4,7 @@ metadata:
   name: haproxy-jo
 spec:
   selector:
-    app: haproxy0jo
+    app: haproxy-jo
   ports:
     - protocol: TCP
       port: 80

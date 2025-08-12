@@ -14,15 +14,19 @@ spec:
     spec:
       containers:
       - name: haproxy-jo
-        image: hfrnssc/java-openshift-jenkins:__IMAGE_TAG__
+        image: bitnami/haproxy:latest
         ports:
         - containerPort: 8080
         volumeMounts:
         - name: haproxy-config-volume-jo
-          mountPath: /etc/haproxy/haproxy.cfg
+          mountPath: /bitnami/haproxy/conf/haproxy.cfg
           subPath: haproxy.cfg
       volumes:
       - name: haproxy-config-volume-jo
         configMap:
           name: haproxy-config-jo
+          items:
+              - key: haproxy.cfg
+                path: haproxy.cfg
+
 
