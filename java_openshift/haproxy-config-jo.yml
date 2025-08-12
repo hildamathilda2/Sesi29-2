@@ -20,10 +20,10 @@ data:
     backend web_backends
         balance roundrobin
         option httpchk GET /actuator/health
-        server bintang springboot-openshift-abelitang2-dev.apps.rm3.7wse.p1.openshiftapps.com:80 check
-        server pandu springboot-openshift-panduass-dev.apps.rm1.0a51.p1.openshiftapps.com:80 check
-        server fayad openshift-spring2-rmuhammadfayyadh-dev.apps.rm1.0a51.p1.openshiftapps.com:80 check
-        server najah spring-openshift-sayyidatun-dev.apps.rm1.0a51.p1.openshiftapps.com:80 check
+        server bintang java-openshift-jenkins-abelitang2-dev.apps.rm3.7wse.p1.openshiftapps.com:80 check
+        server pandu java-openshift-jenkins-panduass-dev.apps.rm1.0a51.p1.openshiftapps.com:80 check
+        server fayad java-openshift-jenkins-rmuhammadfayyadh-dev.apps.rm1.0a51.p1.openshiftapps.com:80 check
+        server najah java-openshift-jenkins-sayyidatun-dev.apps.rm1.0a51.p1.openshiftapps.com:80 check
         server hilda java-openshift-jenkins-hildamathilda7-dev.apps.rm1.0a51.p1.openshiftapps.com:80 check
         log global
 
