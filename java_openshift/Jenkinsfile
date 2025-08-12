@@ -64,6 +64,22 @@ pipeline {
             }
         }
 
+        stage('Generate HAProxy YAML') {
+              steps {
+                 script {
+                    def haproxyConfig = readFile('java_openshift/haproxy-config-jo.yaml')
+                    def haproxyDeployment = readFile('java_openshift/haproxy-deployment-jo.yaml')
+                    def haproxyService = readFile('java_openshift/haproxy-service-jo.yaml')
+
+                    writeFile file: 'haproxy-config-jo.yaml', text: haproxyConfig
+                    writeFile file: 'haproxy-deployment-jo.yaml', text: haproxyDeployment
+                    writeFile file: 'haproxy-service-jo.yaml', text: haproxyService
+
+                    echo "HAProxy YAML files generated and ready for deployment."
+                 }
+              }
+        }
+
         stage('Apply to OpenShift') {
             steps {
                 script {
@@ -98,44 +114,93 @@ pipeline {
                             script: "oc apply -f deployment.yaml",
                             returnStatus: true
                         )
-                        if (applyStatus != 0) {
+                        def configStatus = sh(script: "oc apply -f haproxy-config-jo.yaml", returnStatus: true)
+                        def deployStatus = sh(script: "oc apply -f haproxy-deployment-jo.yaml", returnStatus: true)
+                        def serviceStatus = sh(script: "oc apply -f haproxy-service-jo.yaml", returnStatus: true)
+
+                        if (applyStatus != 0 || configStatus != 0 || deployStatus != 0 || serviceStatus != 0) {
                             error("Failed to apply deployment to project: ${target.name}")
                         }
 
-                        echo "Successfully deployed to ${target.name}"
+                        sh "oc expose service haproxy-jo || true"
+
+                        def haproxyRoute = sh(script: "oc get route haproxy-jo -o jsonpath='{.spec.host}'", returnStdout: true).trim()
+                        echo "HAProxy Gateway deployed to ${target.name}. Access via: http://${haproxyRoute}"
+
                     }
                 }
-             }
+            }
         }
     }
 
     post {
-        success {
+         success {
             script {
-                def route = sh(script: "oc get route java-openshift-jenkins -o jsonpath='{.spec.host}'", returnStdout: true).trim()
-                def routeUrl = "http://${route}"
-                echo "Deployment successful! Access your app at: ${routeUrl}"
-            }
-        }
+                 def targets = [
+                      [name: "hildamathilda7-dev", token: env.OPENSHIFT_TOKEN],
+                      [name: "sayyidatun-dev", token: env.OPENSHIFT_TOKEN_2],
+                      [name: "panduass-dev", token: env.OPENSHIFT_TOKEN_3],
+                      [name: "abelitang2-dev", token: env.OPENSHIFT_TOKEN_4],
+                      [name: "rmuhammadfayyadh-dev", token: env.OPENSHIFT_TOKEN_5]
+                 ]
 
-        failure {
-            script {
-                def payload = """
-                {
-                  "text": "Jenkins deployment failed for *java-openshift-jenkins* in build #${env.BUILD_NUMBER}",
-                  "attachments": [
-                    {
-                      "color": "danger",
-                      "title": "Job: ${env.JOB_NAME}",
-                      "title_link": "${env.BUILD_URL}",
-                      "text": "Check the Jenkins logs for more details."
-                    }
-                  ]
-                }
-                """
-                writeFile file: 'alert-payload.json', text: payload
-                sh "curl -X POST -H 'Content-type: application/json' --data @alert-payload.json ${env.WEBHOOK_URL}"
+                 for (target in targets) {
+                       echo "Checking routes for project: ${target.name}"
+
+                       def loginStatus = sh(
+                            script: "oc login ${env.OPENSHIFT_SERVER} --token=${target.token} --insecure-skip-tls-verify",
+                            returnStatus: true
+                       )
+                       if (loginStatus != 0) {
+                            echo "Failed to login to ${target.name}, skipping route check."
+                            continue
+                       }
+
+                       def projectStatus = sh(
+                            script: "oc project ${target.name}",
+                            returnStatus: true
+                       )
+                       if (projectStatus != 0) {
+                            echo "Failed to switch to ${target.name}, skipping route check."
+                            continue
+                       }
+
+                        def appRoute = sh(script: "oc get route java-openshift-jenkins -o jsonpath='{.spec.host}'", returnStdout: true).trim()
+                        def haproxyRoute = sh(script: "oc get route haproxy-jo -o jsonpath='{.spec.host}'", returnStdout: true).trim()
+
+                        if (appRoute) {
+                            echo "App route for ${target.name}: http://${appRoute}"
+                        } else {
+                            echo "App route not found in ${target.name}"
+                        }
+
+                        if (haproxyRoute) {
+                            echo "HAProxy route for ${target.name}: http://${haproxyRoute}"
+                        } else {
+                            echo "HAProxy route not found in ${target.name}"
+                        }
+                 }
             }
-        }
+         }
+
+         failure {
+             script {
+                 def payload = """
+                    {
+                      "text": "Jenkins deployment failed for *java-openshift-jenkins* in build #${env.BUILD_NUMBER}",
+                      "attachments": [
+                        {
+                          "color": "danger",
+                          "title": "Job: ${env.JOB_NAME}",
+                          "title_link": "${env.BUILD_URL}",
+                          "text": "Check the Jenkins logs for more details."
+                        }
+                      ]
+                    }
+                    """
+                    writeFile file: 'alert-payload.json', text: payload
+                    sh "curl -X POST -H 'Content-type: application/json' --data @alert-payload.json ${env.WEBHOOK_URL}"
+             }
+         }
     }
 }
