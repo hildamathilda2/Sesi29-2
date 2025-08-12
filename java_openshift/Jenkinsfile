@@ -67,13 +67,13 @@ pipeline {
         stage('Generate HAProxy YAML') {
               steps {
                  script {
-                    def haproxyConfig = readFile('java_openshift/haproxy-config-jo.yaml')
-                    def haproxyDeployment = readFile('java_openshift/haproxy-deployment-jo.yaml')
-                    def haproxyService = readFile('java_openshift/haproxy-service-jo.yaml')
+                    def haproxyConfig = readFile('java_openshift/haproxy-config-jo.yml')
+                    def haproxyDeployment = readFile('java_openshift/haproxy-deployment-jo.yml')
+                    def haproxyService = readFile('java_openshift/haproxy-service-jo.yml')
 
-                    writeFile file: 'haproxy-config-jo.yaml', text: haproxyConfig
-                    writeFile file: 'haproxy-deployment-jo.yaml', text: haproxyDeployment
-                    writeFile file: 'haproxy-service-jo.yaml', text: haproxyService
+                    writeFile file: 'haproxy-config-jo.yml', text: haproxyConfig
+                    writeFile file: 'haproxy-deployment-jo.yml', text: haproxyDeployment
+                    writeFile file: 'haproxy-service-jo.yml', text: haproxyService
 
                     echo "HAProxy YAML files generated and ready for deployment."
                  }
@@ -114,9 +114,9 @@ pipeline {
                             script: "oc apply -f deployment.yaml",
                             returnStatus: true
                         )
-                        def configStatus = sh(script: "oc apply -f haproxy-config-jo.yaml", returnStatus: true)
-                        def deployStatus = sh(script: "oc apply -f haproxy-deployment-jo.yaml", returnStatus: true)
-                        def serviceStatus = sh(script: "oc apply -f haproxy-service-jo.yaml", returnStatus: true)
+                        def configStatus = sh(script: "oc apply -f haproxy-config-jo.yml", returnStatus: true)
+                        def deployStatus = sh(script: "oc apply -f haproxy-deployment-jo.yml", returnStatus: true)
+                        def serviceStatus = sh(script: "oc apply -f haproxy-service-jo.yml", returnStatus: true)
 
                         if (applyStatus != 0 || configStatus != 0 || deployStatus != 0 || serviceStatus != 0) {
                             error("Failed to apply deployment to project: ${target.name}")
